@@ -1,0 +1,45 @@
+name: GitHub Metrics
+on:
+  schedule: [{ cron: "0 */12 * * *" }]   # twice a day
+  workflow_dispatch:
+  push: { branches: [main] }
+
+permissions:
+  contents: write
+
+jobs:
+  github-metrics:
+    runs-on: ubuntu-latest
+    env:
+      METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
+    steps:
+      - name: Generate metrics (skipped until METRICS_TOKEN secret is set)
+        if: ${{ env.METRICS_TOKEN != '' }}
+        uses: lowlighter/metrics@latest
+        with:
+          # Create a classic PAT (scopes: read:org, read:user, repo) and save it
+          # in this repo as a secret named METRICS_TOKEN
+          token: ${{ secrets.METRICS_TOKEN }}
+          user: rishu622
+          template: classic
+          filename: github-metrics.svg
+          base: header, activity, community, repositories, metadata
+          config_timezone: Asia/Kolkata
+          config_display: large
+
+          plugin_isocalendar: yes            # 3D contributions calendar
+          plugin_isocalendar_duration: half-year
+
+          plugin_languages: yes              # most used languages
+          plugin_languages_sections: most-used
+          plugin_languages_limit: 8
+
+          plugin_habits: yes                 # coding habits & recent activity
+          plugin_habits_from: 200
+          plugin_habits_charts: yes
+
+          plugin_lines: yes                  # lines added / removed
+          plugin_followup: yes               # issues & PR stats
+          plugin_notable: yes                # notable contributions
+          plugin_stargazers: yes
+          plugin_stargazers_charts: yes
