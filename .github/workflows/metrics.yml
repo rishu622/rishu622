@@ -10,16 +10,12 @@ permissions:
 jobs:
   github-metrics:
     runs-on: ubuntu-latest
-    env:
-      METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
     steps:
-      - name: Generate metrics (skipped until METRICS_TOKEN secret is set)
-        if: ${{ env.METRICS_TOKEN != '' }}
+      - name: Generate metrics
         uses: lowlighter/metrics@latest
         with:
-          # Create a classic PAT (scopes: read:org, read:user, repo) and save it
-          # in this repo as a secret named METRICS_TOKEN
-          token: ${{ secrets.METRICS_TOKEN }}
+          # Optional METRICS_TOKEN (PAT) for richer data; falls back to the built-in GITHUB_TOKEN
+          token: ${{ secrets.METRICS_TOKEN || secrets.GITHUB_TOKEN }}
           user: rishu622
           template: classic
           filename: github-metrics.svg
